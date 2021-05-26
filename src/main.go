@@ -103,6 +103,15 @@ func insert(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(str)
 	} else {
 		id := custom.Id
+		var check_id int64
+		db.Table("user").Select("id").Where("id = ?", id).Scan(&check_id)
+		//checks if user entered ID is already present or not
+		if check_id != 0 {
+			var str string
+			str = "Id Exists"
+			json.NewEncoder(w).Encode(str)
+			return;
+		}
 		firstname := custom.FirstName
 		lastname := custom.LastName
 		city := custom.City
@@ -121,8 +130,8 @@ func insert(w http.ResponseWriter, r *http.Request) {
 		user := Customer{Id: id, FirstName: firstname, LastName: lastname, City: city, Phone: phone, Height: height, Gender: gender, Password: bs, Married: married, Created: created, Updated: updated}
 		db.Create(&Customer{Id: id, FirstName: firstname, LastName: lastname, City: city, Phone: phone, Height: height, Gender: gender, Password: bs, Married: married, Created: created, Updated: updated})
 		json.NewEncoder(w).Encode(user)
-	}
-}
+	}}
+
 //returns the name of created table
 func (Customer) TableName() string {
 	return "user"
